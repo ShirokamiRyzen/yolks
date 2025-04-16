@@ -15,6 +15,7 @@ RUN apt update && apt -y install \
     dnsutils \
     tzdata \
     zip \
+    unzip \
     tar \
     curl \
     build-essential \
