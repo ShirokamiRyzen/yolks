@@ -2,11 +2,11 @@ FROM        --platform=$TARGETOS/$TARGETARCH node:22-bookworm-slim
 
 LABEL       author="Shirokami Ryzen" maintainer="ryzendesu.vip@gmail.com"
 
-# add container user and set stop signal
+# Tambahkan user container
 RUN         useradd -m -d /home/container container
 STOPSIGNAL  SIGINT
 
-# Install dependencies
+# Install semua dependencies termasuk Chromium
 RUN         apt update && apt -y install \
     ffmpeg \
     iproute2 \
@@ -51,11 +51,13 @@ RUN         apt update && apt -y install \
     lsb-release \
     x11-utils \
     libgbm-dev \
+    chromium \
+    chromium-driver \
     --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js global tools
+# Install tools tambahan (opsional)
 RUN         npm install --global typescript ts-node @types/node
 
 # Install pnpm
@@ -63,12 +65,12 @@ RUN         npm install -g corepack \
     && corepack enable \
     && corepack prepare pnpm@latest --activate
 
-# Switch to non-root user
+# Pindah ke user container biasa
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
-# Copy entrypoint script
+# Salin dan izinkan entrypoint
 COPY        --chown=container:container ./../entrypoint.sh /entrypoint.sh
 RUN         chmod +x /entrypoint.sh
 
